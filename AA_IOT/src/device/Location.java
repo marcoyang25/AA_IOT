@@ -3,7 +3,6 @@ package device;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.Random;
 
 public class Location {
 	private int id; // unique ID
@@ -20,10 +19,8 @@ public class Location {
 		this.id = ++count;
 		
 		// initialize x and y coordinate
-		final Random radius = new Random();
-		final Random angle = new Random();
-		double r = Device.MAX_RADIUS * radius.nextDouble();
-		double a = 2 * Math.PI * angle.nextDouble();
+		double r = Device.MAX_RADIUS * Math.random();
+		double a = 2 * Math.PI * Math.random();
 		this.x = r * Math.cos(a);
 		this.y = r * Math.sin(a);
 		
@@ -32,8 +29,30 @@ public class Location {
 		this.coveredBy = new HashSet<>();
 	}
 	
+	public int getId() {
+		return id;
+	}
+
+
+	public double getX() {
+		return x;
+	}
+
+
+	public double getY() {
+		return y;
+	}
+
 	public void addGroup(Group group) {
 		this.groups.add(group);
+	}
+	
+	public int getGroupsSize() {
+		return this.groups.size();
+	}
+	
+	public void addCoveredby(Device device) {
+		this.coveredBy.add(device);
 	}
 	
 	public Set<Device> getCoveredBy() {
