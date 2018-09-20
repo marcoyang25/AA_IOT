@@ -8,11 +8,12 @@ import java.util.Set;
 import com.google.common.collect.Range;
 
 public class Locations extends HashMap<Integer, Location> {
+
+	/*
+	 * Construct the possible sets of devices selection (group) for a location,
+	 * which satisfies alpha and gamma
+	 */
 	public static void constructGroups(Location location, Double alpha, Double gamma) {
-		/**
-		 * Construct the possible sets of devices selection (group) for a
-		 * location, which satisfies alpha and gamma
-		 */
 		List<Device> coveredby = new ArrayList<>(location.getCoveredBy());
 		// checking the intersection of two devices
 		for (int i = 0; i < coveredby.size(); i++) {
@@ -91,4 +92,10 @@ public class Locations extends HashMap<Integer, Location> {
 			} // end for i loop
 		} // end for j loop
 	} // end method constructGroups
+
+	@Override
+	public String toString() {
+		return String.format("Locations: %s", super.toString());
+	}
+
 }
