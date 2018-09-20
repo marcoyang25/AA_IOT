@@ -27,7 +27,7 @@ public class Locations extends HashMap<Integer, Location> {
 
 				// if d1 == d2
 				if (d1.equals(d2)) {
-					Range<Double> interval = Range.closed(i1.lowerEndpoint(), i2.upperEndpoint());
+					Range<Double> interval = Range.closed(i1.lowerEndpoint(), i1.upperEndpoint());
 					group.setInterval(interval);
 					group.addMember(d1);
 				}
