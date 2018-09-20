@@ -4,7 +4,6 @@ import java.util.Set;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Random;
 import com.google.common.collect.Range;
 
 public class Device {
@@ -27,11 +26,9 @@ public class Device {
 	public Device() {
 		this.id = ++count;
 
-		final Random radius = new Random();
-		final Random angle = new Random();
 		// initialize x and y coordinate
-		double r = Device.MAX_RADIUS * radius.nextDouble();
-		double a = 2 * Math.PI * angle.nextDouble();
+		double r = Device.MAX_RADIUS * Math.random();
+		double a = 2 * Math.PI * Math.random();
 		this.x = r * Math.cos(a);
 		this.y = r * Math.sin(a);
 
@@ -40,9 +37,13 @@ public class Device {
 		this.communicationCost = -1;
 		this.coverage = new HashSet<>();
 
-		this.precision = -1;
+		this.precision = 5 * Math.random();
 		this.accuracies = new HashMap<>();
 		this.intervals = new HashMap<>();
+	}
+
+	public int getId() {
+		return id;
 	}
 
 	public double getCost() {
@@ -59,6 +60,10 @@ public class Device {
 
 	public double getY() {
 		return y;
+	}
+
+	public void addCoverage(Location location) {
+		this.coverage.add(location);
 	}
 
 	public Set<Location> getCoverage() {
