@@ -9,7 +9,7 @@ public class Location {
 	private static int count = 0;
 	private double x; // x coordinate
 	private double y; // y coordinate
-	
+
 	boolean satisfied;
 	private Group selectedGroup;
 	private Set<Group> groups;
@@ -17,48 +17,67 @@ public class Location {
 
 	public Location() {
 		this.id = ++count;
-		
+
 		// initialize x and y coordinate
 		double r = Device.MAX_RADIUS * Math.random();
 		double a = 2 * Math.PI * Math.random();
 		this.x = r * Math.cos(a);
 		this.y = r * Math.sin(a);
-		
+
+		this.satisfied = false;
 		this.selectedGroup = null;
 		this.groups = new HashSet<>();
 		this.coveredBy = new HashSet<>();
 	}
-	
+
 	public int getId() {
 		return id;
 	}
-
 
 	public double getX() {
 		return x;
 	}
 
-
 	public double getY() {
 		return y;
+	}
+
+	public boolean isSatisfied() {
+		return satisfied;
+	}
+
+	public void setSatisfied(boolean satisfied) {
+		this.satisfied = satisfied;
+	}
+
+	public Group getSelectedGroup() {
+		return selectedGroup;
+	}
+
+	public void setSelectedGroup(Group selectedGroup) {
+		this.selectedGroup = selectedGroup;
 	}
 
 	public void addGroup(Group group) {
 		this.groups.add(group);
 	}
-	
+
+	public Set<Group> getGroups() {
+		return Collections.unmodifiableSet(groups);
+	}
+
 	public int getGroupsSize() {
 		return this.groups.size();
 	}
-	
+
 	public void addCoveredby(Device device) {
 		this.coveredBy.add(device);
 	}
-	
+
 	public Set<Device> getCoveredBy() {
 		return Collections.unmodifiableSet(coveredBy);
 	}
-	
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -80,10 +99,10 @@ public class Location {
 			return false;
 		return true;
 	}
-	
+
 	@Override
 	public String toString() {
 		return String.format("Location [id=%s, covered by:%s]", id, coveredBy.size());
 	}
-	
+
 }
