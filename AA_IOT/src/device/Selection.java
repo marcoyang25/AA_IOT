@@ -29,8 +29,10 @@ public class Selection {
 			} else if ((selectedGroup = selectMaxTotalInvolve(location, unsatisfiedLocations,
 					selectedDevices)) != null) {
 				location.setSelectedGroup(selectedGroup);
+			} else if ((selectedGroup = selectMinEnergy(location, selectedDevices)) != null) {
+				location.setSelectedGroup(selectedGroup);
 			} else {
-
+				System.err.println("No Group is selected!!");
 			}
 
 			// Z = Z ∪ g
@@ -39,6 +41,7 @@ public class Selection {
 			// adjustment
 
 			// Z = the union of selected groups for all satisfied locations
+			// devices that are not in use are deleted
 			selectedDevices.clear();
 			for (Location satisfiedLocation : satisfiedLocations) {
 				selectedDevices.addAll(satisfiedLocation.getSelectedGroup().getMembers());
@@ -78,7 +81,7 @@ public class Selection {
 			}
 		}
 		return maxGroup;
-	}
+	} // end method selectMaxTotalSatisfy
 
 	private static int totalSatisfy(Group selecting, Set<Location> unsatisfiedLocations, Set<Device> selectedDevices) {
 		int totalSatisfy = 0;
@@ -110,7 +113,7 @@ public class Selection {
 			}
 		}
 		return maxGroup;
-	}
+	} // end method selectMaxTotalInvolve
 
 	private static int totalInvolve(Group selecting, Set<Location> unsatisfiedLocations, Set<Device> selectedDevices) {
 		int totalInvolve = 0;
@@ -139,6 +142,20 @@ public class Selection {
 			return 0;
 		}
 	} // end method involve
+
+	private static Group selectMinEnergy(Location location, Set<Device> selectedDevices) {
+		Group minGroup = null;
+		double min = 0;
+		for (Group selecting : location.getGroups()) {
+			double energy = computeDevicesEnergy(Sets.difference(selecting.getMembers(),
+					Sets.intersection(selecting.getMembers(), selectedDevices)));
+			if (energy <= min) {
+				min = energy;
+				minGroup = selecting;
+			}
+		}
+		return minGroup;
+	} // end method selectMinEnergy
 
 	private static double computeDevicesEnergy(Set<Device> devices) {
 		double energy = 0;
