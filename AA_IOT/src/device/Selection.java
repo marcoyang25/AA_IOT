@@ -40,6 +40,7 @@ public class Selection {
 			selectedDevices.addAll(selectedGroup.getMembers());
 
 			// adjustment
+			adjust(satisfiedLocations, selectedDevices);
 
 			// Z = the union of selected groups for all satisfied locations
 			// devices that are not in use are deleted
@@ -84,7 +85,7 @@ public class Selection {
 		return maxGroup;
 	} // end method selectMaxTotalSatisfy
 
-	/*
+	/**
 	 * To satisfy other locations after satisfying MaxGroupsLocation
 	 */
 	private static void satisfyUnsatisfiedLocations(Group selected, Set<Location> unsatisfiedLocations,
@@ -184,4 +185,22 @@ public class Selection {
 		}
 		return energy;
 	} // end method computeDevicesEnergy
+	
+	private static void adjust(Set<Location> satisfiedLocations, Set<Device> selectedDevices) {
+		for (Location location : satisfiedLocations) {
+			Group selectedGroup = location.getSelectedGroup();
+			double currentEnergy = computeDevicesEnergy(selectedGroup.getMembers());
+			for (Group group : location.getGroups()) {
+				if(selectedGroup.equals(group)) {
+					continue;
+				}
+				if (selectedDevices.containsAll(group.getMembers())
+						&& computeDevicesEnergy(group.getMembers()) < currentEnergy) {
+					currentEnergy = computeDevicesEnergy(group.getMembers());
+					location.setSelectedGroup(group);
+				}
+			}
+		}
+	} // end method adjust
+	
 }
