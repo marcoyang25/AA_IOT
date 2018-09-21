@@ -26,6 +26,7 @@ public class Selection {
 
 			if ((selectedGroup = selectMaxTotalSatisfy(location, unsatisfiedLocations, selectedDevices)) != null) {
 				location.setSelectedGroup(selectedGroup);
+				satisfyUnsatisfiedLocations(selectedGroup, unsatisfiedLocations, satisfiedLocations, selectedDevices);
 			} else if ((selectedGroup = selectMaxTotalInvolve(location, unsatisfiedLocations,
 					selectedDevices)) != null) {
 				location.setSelectedGroup(selectedGroup);
@@ -82,6 +83,25 @@ public class Selection {
 		}
 		return maxGroup;
 	} // end method selectMaxTotalSatisfy
+
+	/*
+	 * To satisfy other locations after satisfying MaxGroupsLocation
+	 */
+	private static void satisfyUnsatisfiedLocations(Group selected, Set<Location> unsatisfiedLocations,
+			Set<Location> satisfiedLocations, Set<Device> selectedDevices) {
+		for (Location location : unsatisfiedLocations) {
+			for (Group unsatisfiedGroup : location.getGroups()) {
+				if (isSatisfy(selected, unsatisfiedGroup, selectedDevices) == 1) {
+					location.setSatisfied(true);
+					unsatisfiedLocations.remove(location);
+					satisfiedLocations.add(location);
+					// the location is now satisfied by selecting this group
+					location.setSelectedGroup(unsatisfiedGroup);
+					break;
+				}
+			}
+		}
+	} // end method satisfyUnsatisfiedLocations
 
 	private static int totalSatisfy(Group selecting, Set<Location> unsatisfiedLocations, Set<Device> selectedDevices) {
 		int totalSatisfy = 0;
