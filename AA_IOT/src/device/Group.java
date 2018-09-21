@@ -1,5 +1,6 @@
 package device;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import com.google.common.collect.Range;
@@ -29,16 +30,20 @@ public class Group {
 		this.members.add(device);
 	}
 
+	public Set<Device> getMembers() {
+		return Collections.unmodifiableSet(members);
+	}
+
 	/**
 	 * Calculate the average accuracy of the group measuring the location by
 	 * StatsAccumulator
 	 */
 	public double getAverageAccuracy(Location location) {
-		StatsAccumulator s = new StatsAccumulator();
+		StatsAccumulator accumulator = new StatsAccumulator();
 		for (Device device : members) {
-			s.add(device.getAccuracies().get(location));
+			accumulator.add(device.getAccuracies().get(location));
 		}
-		return s.mean();
+		return accumulator.mean();
 	}
 
 	@Override
@@ -65,7 +70,7 @@ public class Group {
 
 	@Override
 	public String toString() {
-		return String.format("Group [members:%s]", id, members);
+		return String.format("Group [interval:%s, members:%s]", interval, members);
 	}
 
 }
