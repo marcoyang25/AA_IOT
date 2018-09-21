@@ -24,7 +24,7 @@ public class Selection {
 			unsatisfiedLocations.remove(location);
 			satisfiedLocations.add(location);
 
-			// Z = Z ¡å g
+			// Z = Z âˆª g
 			selectedDevices.addAll(selectedGroup.getMembers());
 
 			// adjustment
