@@ -24,6 +24,15 @@ public class Selection {
 			unsatisfiedLocations.remove(location);
 			satisfiedLocations.add(location);
 
+			if ((selectedGroup = selectMaxTotalSatisfy(location, unsatisfiedLocations, selectedDevices)) != null) {
+				location.setSelectedGroup(selectedGroup);
+			} else if ((selectedGroup = selectMaxTotalInvolve(location, unsatisfiedLocations,
+					selectedDevices)) != null) {
+				location.setSelectedGroup(selectedGroup);
+			} else {
+
+			}
+
 			// Z = Z ∪ g
 			selectedDevices.addAll(selectedGroup.getMembers());
 
