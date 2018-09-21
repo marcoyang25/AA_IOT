@@ -69,7 +69,7 @@ public class Selection {
 			if (totalSatisfy(selecting, unsatisfiedLocations, selectedDevices) == 0) {
 				continue;
 			} else {
-				double energy = computeDevicesCost(Sets.difference(selecting.getMembers(),
+				double energy = computeDevicesEnergy(Sets.difference(selecting.getMembers(),
 						Sets.intersection(selecting.getMembers(), selectedDevices)));
 				if ((totalSatisfy(selecting, unsatisfiedLocations, selectedDevices) / energy) >= max) {
 					max = totalSatisfy(selecting, unsatisfiedLocations, selectedDevices) / energy;
@@ -101,7 +101,7 @@ public class Selection {
 			if (totalInvolve(selecting, unsatisfiedLocations, selectedDevices) == 0) {
 				continue;
 			} else {
-				double energy = computeDevicesCost(Sets.difference(selecting.getMembers(),
+				double energy = computeDevicesEnergy(Sets.difference(selecting.getMembers(),
 						Sets.intersection(selecting.getMembers(), selectedDevices)));
 				if ((totalInvolve(selecting, unsatisfiedLocations, selectedDevices) / energy) >= max) {
 					max = totalInvolve(selecting, unsatisfiedLocations, selectedDevices) / energy;
@@ -140,11 +140,11 @@ public class Selection {
 		}
 	} // end method involve
 
-	private static double computeDevicesCost(Set<Device> devices) {
-		double cost = 0;
+	private static double computeDevicesEnergy(Set<Device> devices) {
+		double energy = 0;
 		for (Device device : devices) {
-			cost += device.getCost();
+			energy += device.getCost();
 		}
-		return cost;
-	} // end method computeDevicesCost
+		return energy;
+	} // end method computeDevicesEnergy
 }
