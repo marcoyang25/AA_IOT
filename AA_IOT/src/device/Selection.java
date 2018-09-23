@@ -178,10 +178,14 @@ public class Selection {
 		return minGroup;
 	} // end method selectMinEnergy
 
+	/**
+	 * The energy of connecting a device to its default associated MEC is
+	 * calculated. Then, total energy consumed by input devices is returned.
+	 */
 	private static double computeDevicesEnergy(Set<Device> devices) {
 		double energy = 0;
 		for (Device device : devices) {
-			energy += device.getConnectionCost();
+			energy += device.getConnectionEnergy().get(device.getAssociatedMEC());
 		}
 		return energy;
 	} // end method computeDevicesEnergy
