@@ -14,7 +14,6 @@ public class Device {
 	private static int count = 0;
 	private double x; // x coordinate
 	private double y; // y coordinate
-	private double cost; // energy cost
 	private double connectionCost;
 	private double communicationCost;
 	private Set<Location> coverage; // locations covered by device
@@ -32,7 +31,7 @@ public class Device {
 		this.x = r * Math.cos(a);
 		this.y = r * Math.sin(a);
 
-		this.cost = -1; // initialize cost
+		// initialize cost
 		this.connectionCost = -1;
 		this.communicationCost = -1;
 		this.coverage = new HashSet<>();
@@ -46,12 +45,20 @@ public class Device {
 		return id;
 	}
 
-	public double getCost() {
-		return cost;
+	public double getConnectionCost() {
+		return connectionCost;
 	}
 
-	public void setCost(double cost) {
-		this.cost = cost;
+	public void setConnectionCost(double connectionCost) {
+		this.connectionCost = connectionCost;
+	}
+
+	public double getCommunicationCost() {
+		return communicationCost;
+	}
+
+	public void setCommunicationCost(double communicationCost) {
+		this.communicationCost = communicationCost;
 	}
 
 	public double getX() {
