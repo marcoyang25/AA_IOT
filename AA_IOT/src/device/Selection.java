@@ -166,7 +166,7 @@ public class Selection {
 
 	private static Group selectMinEnergy(Location location, Set<Device> selectedDevices) {
 		Group minGroup = null;
-		double min = 0;
+		double min = Double.POSITIVE_INFINITY;
 		for (Group selecting : location.getGroups()) {
 			double energy = computeDevicesEnergy(Sets.difference(selecting.getMembers(),
 					Sets.intersection(selecting.getMembers(), selectedDevices)));
