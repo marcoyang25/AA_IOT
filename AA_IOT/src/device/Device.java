@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import com.google.common.collect.Range;
+import graph.Vertex;
 
 public class Device {
 	public static final double MAX_RADIUS = 100;
@@ -14,6 +15,7 @@ public class Device {
 	private static int count = 0;
 	private double x; // x coordinate
 	private double y; // y coordinate
+	private Vertex associatedMEC;
 	private double connectionCost;
 	private double communicationCost;
 	private Set<Location> coverage; // locations covered by device
@@ -31,6 +33,7 @@ public class Device {
 		this.x = r * Math.cos(a);
 		this.y = r * Math.sin(a);
 
+		this.associatedMEC = null;
 		// initialize cost
 		this.connectionCost = -1;
 		this.communicationCost = -1;
@@ -43,6 +46,14 @@ public class Device {
 
 	public int getId() {
 		return id;
+	}
+
+	public Vertex getAssociatedMEC() {
+		return associatedMEC;
+	}
+
+	public void setAssociatedMEC(Vertex associatedMEC) {
+		this.associatedMEC = associatedMEC;
 	}
 
 	public double getConnectionCost() {
