@@ -2,35 +2,24 @@ package graph;
 
 import java.util.*;
 
-import org.jgrapht.*;
+import org.jgrapht.alg.shortestpath.FloydWarshallShortestPaths;
 import org.jgrapht.ext.*;
-import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
 import org.jgrapht.graph.*;
 
 public class Topo {
 	private Topo() {
 	}
 
-	public static double getEnergyConsumed(Vertex source, Vertex sink, double size,
-			DijkstraShortestPath<Vertex, DefaultEdge> d) {
+	public static double getEnergyConsumed(Vertex source, Vertex sink,
+			FloydWarshallShortestPaths<Vertex, DefaultEdge> f) {
 		double consumed = 0;
-		if (d == null)
+		if (f == null) {
 			return -1;
-		for (Vertex v : d.getPath(source, sink).getVertexList()) {
-			switch (v.getType()) {
-			case BS:
-				consumed += Vertex.BS_ENERGY * size;
-				break;
-			case CLOUDSERVER:
-				consumed += Vertex.CLOUDSEVER_ENERGY;
-				break;
-			case MEC:
-				consumed += Vertex.MEC_FORWARDING_ENERGY * size;
-				break;
-			case SWITCH:
-				consumed += Vertex.SWITCH_ENERGY * size;
-				break;
-			}
+		}
+		if (source.equals(sink)) {
+			return 0;
+		} else {
+			consumed = f.getPathWeight(source, sink) * Vertex.SWITCH_ENERGY;
 		}
 		return consumed;
 	} // end method getEnergyConsumed
