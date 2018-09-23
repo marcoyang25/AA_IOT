@@ -4,6 +4,8 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import graph.Vertex;
+
 public class Location {
 	private int id; // unique ID
 	private static int count = 0;
@@ -13,6 +15,7 @@ public class Location {
 	boolean satisfied;
 	private Group selectedGroup;
 	private Set<Group> groups;
+	private Vertex processingMEC;
 	private Set<Device> coveredBy;
 
 	public Location() {
@@ -27,6 +30,7 @@ public class Location {
 		this.satisfied = false;
 		this.selectedGroup = null;
 		this.groups = new HashSet<>();
+		this.processingMEC = null;
 		this.coveredBy = new HashSet<>();
 	}
 
@@ -68,6 +72,14 @@ public class Location {
 
 	public int getGroupsSize() {
 		return this.groups.size();
+	}
+
+	public Vertex getProcessingMEC() {
+		return processingMEC;
+	}
+
+	public void setProcessingMEC(Vertex processingMEC) {
+		this.processingMEC = processingMEC;
 	}
 
 	public void addCoveredby(Device device) {
