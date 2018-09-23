@@ -1,7 +1,5 @@
 package graph;
 
-import java.util.Set;
-
 public class Vertex {
 	public static final double BS_ENERGY = 0.5;
 	public static final double CLOUDSEVER_ENERGY = 0.1;
@@ -14,6 +12,7 @@ public class Vertex {
 
 	private int id;
 	private Type type;
+	private double capacity;
 
 	public Vertex(int id, Type type) {
 		this.id = id;
@@ -30,6 +29,10 @@ public class Vertex {
 
 	public void setType(Type type) {
 		this.type = type;
+	}
+
+	public double getCapacity() {
+		return capacity;
 	}
 
 	@Override
