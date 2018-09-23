@@ -181,7 +181,7 @@ public class Selection {
 	private static double computeDevicesEnergy(Set<Device> devices) {
 		double energy = 0;
 		for (Device device : devices) {
-			energy += device.getCost();
+			energy += device.getConnectionCost();
 		}
 		return energy;
 	} // end method computeDevicesEnergy
