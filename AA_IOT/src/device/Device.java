@@ -16,8 +16,8 @@ public class Device {
 	private double x; // x coordinate
 	private double y; // y coordinate
 	private Vertex associatedMEC;
-	private double connectionCost;
-	private double communicationCost;
+	private Map<Vertex, Double> connectionEnergy;
+	private double communicationEnergy;
 	private Set<Location> coverage; // locations covered by device
 
 	private double precision;
@@ -35,8 +35,8 @@ public class Device {
 
 		this.associatedMEC = null;
 		// initialize cost
-		this.connectionCost = -1;
-		this.communicationCost = -1;
+		this.connectionEnergy = new HashMap<>();
+		this.communicationEnergy = -1;
 		this.coverage = new HashSet<>();
 
 		this.precision = 5 * Math.random();
@@ -48,6 +48,14 @@ public class Device {
 		return id;
 	}
 
+	public double getX() {
+		return x;
+	}
+
+	public double getY() {
+		return y;
+	}
+
 	public Vertex getAssociatedMEC() {
 		return associatedMEC;
 	}
@@ -56,28 +64,16 @@ public class Device {
 		this.associatedMEC = associatedMEC;
 	}
 
-	public double getConnectionCost() {
-		return connectionCost;
+	public Map<Vertex, Double> getConnectionEnergy() {
+		return connectionEnergy;
 	}
 
-	public void setConnectionCost(double connectionCost) {
-		this.connectionCost = connectionCost;
+	public double getCommunicationEnergy() {
+		return communicationEnergy;
 	}
 
-	public double getCommunicationCost() {
-		return communicationCost;
-	}
-
-	public void setCommunicationCost(double communicationCost) {
-		this.communicationCost = communicationCost;
-	}
-
-	public double getX() {
-		return x;
-	}
-
-	public double getY() {
-		return y;
+	public void setCommunicationEnergy(double communicationEnergy) {
+		this.communicationEnergy = communicationEnergy;
 	}
 
 	public void addCoverage(Location location) {
