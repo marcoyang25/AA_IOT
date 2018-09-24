@@ -1,10 +1,15 @@
 package device;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.alg.shortestpath.FloydWarshallShortestPaths;
@@ -43,6 +48,13 @@ public class Adjustment {
 					Device deviceToAdjust = Q.poll();
 					unadjustedDevices.remove(deviceToAdjust);
 					// adjust this device
+					// TODO CAPACITY!
+					double reducedEnergy = adjustDevice(deviceToAdjust, mecs, f);
+					if (reducedEnergy > 0) {
+						// System.out.println("reducedEnergy: " +
+						// reducedEnergy);
+						addAffectedDevices(Q, deviceToAdjust, unadjustedDevices);
+					}
 
 				} // end while
 			} // end while
@@ -50,6 +62,11 @@ public class Adjustment {
 
 	} // end method adjust
 
+	/**
+	 * Find the MEC server with minimum energy to process the data of an input
+	 * location. Then, for this location, set its processing MEC and
+	 * communication energy.
+	 */
 	private static void setMinCommnicationEnergyMEC(Location location, List<Vertex> mecs,
 			FloydWarshallShortestPaths<Vertex, DefaultEdge> f) {
 		Vertex MinCommnicationEnergyMEC = null;
@@ -65,6 +82,10 @@ public class Adjustment {
 		location.setProcessingMEC(MinCommnicationEnergyMEC);
 	} // end method setMinCommnicationEnergyMEC
 
+	/**
+	 * Calculate the communication energy to process the data of a location. The
+	 * data is sent to the input MEC server.
+	 */
 	private static double locationCommnicationEnergy(Location location, Vertex mec,
 			FloydWarshallShortestPaths<Vertex, DefaultEdge> f) {
 		double consumed = 0;
@@ -74,6 +95,9 @@ public class Adjustment {
 		return consumed;
 	} // end method locationCommnicationEnergy
 
+	/**
+	 * Calculate the communication energy for an input device.
+	 */
 	private static double deviceCommunicationEnergy(Device device, FloydWarshallShortestPaths<Vertex, DefaultEdge> f) {
 		double consumed = 0;
 		for (Location location : device.getLocationsResponsibleFor()) {
@@ -89,12 +113,116 @@ public class Adjustment {
 		for (Device device : unadjustedDevices) {
 			double connectionEnergy = device.getConnectionEnergy().get(device.getAssociatedMEC());
 			double communicationEngergy = deviceCommunicationEnergy(device, f);
-			if ((connectionEnergy + communicationEngergy) <= max) {
+			if ((connectionEnergy + communicationEngergy) >= max) {
 				max = connectionEnergy + communicationEngergy;
 				MaxEnergyDevice = device;
 			}
 		}
 		return MaxEnergyDevice;
 	} // end method findMaxEnergyDevice
+
+	/**
+	 * 
+	 */
+	private static double adjustDevice(Device deviceToAdjust, List<Vertex> mecs,
+			FloydWarshallShortestPaths<Vertex, DefaultEdge> f) {
+		Vertex originalAssociatedMEC = deviceToAdjust.getAssociatedMEC();
+		Vertex maxReducedMEC = null;
+		double minEnergy = Double.POSITIVE_INFINITY;
+		double originalEnergy = deviceToAdjust.getConnectionEnergy().get(deviceToAdjust.getAssociatedMEC())
+				+ deviceToAdjust.getCommunicationEnergy();
+		for (Vertex candidateMEC : mecs) {
+			// skip the original associated MEC server
+			if (originalAssociatedMEC.equals(candidateMEC)) {
+				continue;
+			} else {
+				// change its associated MEC
+				deviceToAdjust.setAssociatedMEC(candidateMEC);
+				// compute the connection energy
+				double connectionEnergy = deviceToAdjust.getConnectionEnergy().get(candidateMEC);
+				double communicationEngergy = 0;
+				for (Location location : deviceToAdjust.getLocationsResponsibleFor()) {
+					communicationEngergy += MinCommnicationEnergyForLocation(location, mecs, f);
+				}
+				// only adjust when the energy can be reduced (< originalEnergy)
+				if ((connectionEnergy + communicationEngergy < originalEnergy)
+						&& (connectionEnergy + communicationEngergy < minEnergy)) {
+					minEnergy = connectionEnergy + communicationEngergy;
+					maxReducedMEC = candidateMEC;
+				}
+			}
+		} // end for
+
+		// if the total energy cannot be reduced
+		if (maxReducedMEC == null) {
+			deviceToAdjust.setAssociatedMEC(originalAssociatedMEC);
+			return 0;
+		}
+		// the total energy can be reduced
+		else {
+			deviceToAdjust.setAssociatedMEC(maxReducedMEC);
+			// adjust locations responsible for
+			for (Location location : deviceToAdjust.getLocationsResponsibleFor()) {
+				setMinCommnicationEnergyMEC(location, mecs, f);
+			}
+			return originalEnergy - minEnergy;
+		}
+	} // end method adjustDevice
+
+	/**
+	 * Calculate minimum energy to process the data of an input location.
+	 */
+	private static double MinCommnicationEnergyForLocation(Location location, List<Vertex> mecs,
+			FloydWarshallShortestPaths<Vertex, DefaultEdge> f) {
+		Double minEnergy = Double.POSITIVE_INFINITY;
+		for (Vertex mec : mecs) {
+			Double CommnicationEnergy = locationCommnicationEnergy(location, mec, f);
+			if (CommnicationEnergy <= minEnergy) {
+				minEnergy = CommnicationEnergy;
+			}
+		}
+		return minEnergy;
+	} // end method MinCommnicationEnergyForLocation
+
+	private static void addAffectedDevices(Queue<Device> Q, Device deviceToAdjust, Set<Device> unadjustedDevices) {
+		for (Location location : deviceToAdjust.getLocationsResponsibleFor()) {
+			for (Device affected : location.getSelectedGroup().getMembers()) {
+				if (deviceToAdjust.equals(affected)) {
+					continue;
+				}
+				if (unadjustedDevices.contains(affected) && !Q.contains(affected)) {
+					Q.offer(affected);
+				}
+			}
+		}
+	} // end method addAffectedDevices
+
+	private static void addAffectedDevicesByRelation(Queue<Device> Q, Device deviceToAdjust,
+			Set<Device> unadjustedDevices) {
+		Map<Device, Integer> affectedDevices = new HashMap<>();
+		for (Location location : deviceToAdjust.getLocationsResponsibleFor()) {
+			for (Device affected : location.getSelectedGroup().getMembers()) {
+				if (deviceToAdjust.equals(affected)) {
+					continue;
+				}
+				if (unadjustedDevices.contains(affected) && !Q.contains(affected)) {
+					Integer count = affectedDevices.get(affected);
+					if (count == null) {
+						affectedDevices.put(affected, 1);
+					} else {
+						affectedDevices.put(affected, count + 1);
+					}
+				}
+			} // end for
+		} // end for
+
+		// sort the map
+		List<Map.Entry<Device, Integer>> sorted = new ArrayList<>(affectedDevices.entrySet());
+		sorted.sort(Collections.reverseOrder(Map.Entry.comparingByValue()));
+		// add to Q
+		for (Entry<Device, Integer> entry : sorted) {
+			Q.offer(entry.getKey());
+		}
+	} // end method addAffectedDevicesByRelation
 
 }
