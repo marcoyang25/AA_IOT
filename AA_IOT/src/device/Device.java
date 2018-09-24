@@ -1,6 +1,7 @@
 package device;
 
 import java.util.Set;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -19,6 +20,7 @@ public class Device {
 	private Map<Vertex, Double> connectionEnergy;
 	private double communicationEnergy;
 	private Set<Location> coverage; // locations covered by device
+	private Set<Location> locationsResponsibleFor;
 
 	private double precision;
 	private Map<Location, Double> accuracies;
@@ -81,7 +83,15 @@ public class Device {
 	}
 
 	public Set<Location> getCoverage() {
-		return coverage;
+		return Collections.unmodifiableSet(coverage);
+	}
+
+	public void addLocationResponsibleFor(Location location) {
+		this.locationsResponsibleFor.add(location);
+	}
+
+	public Set<Location> getLocationsResponsibleFor() {
+		return Collections.unmodifiableSet(locationsResponsibleFor);
 	}
 
 	public double getPrecision() {
