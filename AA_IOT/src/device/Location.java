@@ -16,6 +16,7 @@ public class Location {
 	private Group selectedGroup;
 	private Set<Group> groups;
 	private Vertex processingMEC;
+	private double communicationEnergy;
 	private Set<Device> coveredBy;
 
 	public Location() {
@@ -80,6 +81,14 @@ public class Location {
 
 	public void setProcessingMEC(Vertex processingMEC) {
 		this.processingMEC = processingMEC;
+	}
+
+	public double getCommunicationEnergy() {
+		return communicationEnergy;
+	}
+
+	public void setCommunicationEnergy(double communicationEnergy) {
+		this.communicationEnergy = communicationEnergy;
 	}
 
 	public void addCoveredby(Device device) {
