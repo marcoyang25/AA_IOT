@@ -90,7 +90,12 @@ public class Selection {
 	 */
 	private static void satisfyUnsatisfiedLocations(Group selected, Set<Location> unsatisfiedLocations,
 			Set<Location> satisfiedLocations, Set<Device> selectedDevices) {
-		for (Location location : unsatisfiedLocations) {
+		Set<Location> locationsSelectedGroupCovers = new HashSet<>();
+		// the union of locations that each member in the group covers
+		for (Device member : selected.getMembers()) {
+			locationsSelectedGroupCovers.addAll(member.getCoverage());
+		}
+		for (Location location : Sets.intersection(unsatisfiedLocations, locationsSelectedGroupCovers)) {
 			for (Group unsatisfiedGroup : location.getGroups()) {
 				if (isSatisfy(selected, unsatisfiedGroup, selectedDevices) == 1) {
 					location.setSatisfied(true);
@@ -106,7 +111,12 @@ public class Selection {
 
 	private static int totalSatisfy(Group selecting, Set<Location> unsatisfiedLocations, Set<Device> selectedDevices) {
 		int totalSatisfy = 0;
-		for (Location unsatisfiedLocation : unsatisfiedLocations) {
+		Set<Location> locationsSelectingGroupCovers = new HashSet<>();
+		// the union of locations that each member in the group covers
+		for (Device member : selecting.getMembers()) {
+			locationsSelectingGroupCovers.addAll(member.getCoverage());
+		}
+		for (Location unsatisfiedLocation : Sets.intersection(unsatisfiedLocations, locationsSelectingGroupCovers)) {
 			int satisfy = 0;
 			for (Group unsatisfied : unsatisfiedLocation.getGroups()) {
 				satisfy += isSatisfy(selecting, unsatisfied, selectedDevices);
@@ -138,7 +148,12 @@ public class Selection {
 
 	private static int totalInvolve(Group selecting, Set<Location> unsatisfiedLocations, Set<Device> selectedDevices) {
 		int totalInvolve = 0;
-		for (Location unsatisfiedLocation : unsatisfiedLocations) {
+		Set<Location> locationsSelectingGroupCovers = new HashSet<>();
+		// the union of locations that each member in the group covers
+		for (Device member : selecting.getMembers()) {
+			locationsSelectingGroupCovers.addAll(member.getCoverage());
+		}
+		for (Location unsatisfiedLocation : Sets.intersection(unsatisfiedLocations, locationsSelectingGroupCovers)) {
 			for (Group unsatisfied : unsatisfiedLocation.getGroups()) {
 				totalInvolve += isInvolve(selecting, unsatisfied, selectedDevices);
 			}
