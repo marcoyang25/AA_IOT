@@ -48,14 +48,12 @@ public class Adjustment {
 					Device deviceToAdjust = Q.poll();
 					unadjustedDevices.remove(deviceToAdjust);
 					// adjust this device
-					// TODO CAPACITY!
 					double reducedEnergy = adjustDevice(deviceToAdjust, mecs, f);
 					if (reducedEnergy > 0) {
 						// System.out.println("reducedEnergy: " +
 						// reducedEnergy);
-						addAffectedDevices(Q, deviceToAdjust, unadjustedDevices);
+						addAffectedDevicesByRelation(Q, deviceToAdjust, unadjustedDevices);
 					}
-
 				} // end while
 			} // end while
 		} // end for
@@ -137,7 +135,7 @@ public class Adjustment {
 			// skip the original associated MEC server
 			if (originalAssociatedMEC.equals(candidateMEC)) {
 				continue;
-			} 
+			}
 			if (!candidateMEC.hasCapacity()) {
 				continue;
 			}
