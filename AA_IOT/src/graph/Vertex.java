@@ -12,11 +12,21 @@ public class Vertex {
 
 	private int id;
 	private Type type;
-	private double capacity;
+	private int capacity;
+	private int serving;
 
 	public Vertex(int id, Type type) {
 		this.id = id;
 		this.type = type;
+		this.capacity = -1;
+		this.serving = -1;
+	}
+
+	public Vertex(int id, Type type, int capacity) {
+		this.id = id;
+		this.type = type;
+		this.capacity = capacity;
+		this.serving = 0;
 	}
 
 	public int getId() {
@@ -33,6 +43,24 @@ public class Vertex {
 
 	public double getCapacity() {
 		return capacity;
+	}
+	
+	public boolean hasCapacity() {
+		if (serving < capacity) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	public int getServing() {
+		return serving;
+	}
+
+	public void setServing(int serving) {
+		if (serving <= capacity) {
+			this.serving = serving;
+		}
 	}
 
 	@Override
