@@ -128,11 +128,11 @@ public class Adjustment {
 	 */
 	private static double adjustDevice(Device deviceToAdjust, List<Vertex> mecs,
 			FloydWarshallShortestPaths<Vertex, DefaultEdge> f) {
-		Vertex originalAssociatedMEC = deviceToAdjust.getAssociatedMEC();
+		final Vertex originalAssociatedMEC = deviceToAdjust.getAssociatedMEC();
+		final double originalEnergy = deviceToAdjust.getConnectionEnergy().get(deviceToAdjust.getAssociatedMEC())
+				+ deviceToAdjust.getCommunicationEnergy();
 		Vertex maxReducedMEC = null;
 		double minEnergy = Double.POSITIVE_INFINITY;
-		double originalEnergy = deviceToAdjust.getConnectionEnergy().get(deviceToAdjust.getAssociatedMEC())
-				+ deviceToAdjust.getCommunicationEnergy();
 		for (Vertex candidateMEC : mecs) {
 			// skip the original associated MEC server
 			if (originalAssociatedMEC.equals(candidateMEC)) {
@@ -142,14 +142,14 @@ public class Adjustment {
 				deviceToAdjust.setAssociatedMEC(candidateMEC);
 				// compute the connection energy
 				double connectionEnergy = deviceToAdjust.getConnectionEnergy().get(candidateMEC);
-				double communicationEngergy = 0;
+				double communicationEnergy = 0;
 				for (Location location : deviceToAdjust.getLocationsResponsibleFor()) {
-					communicationEngergy += MinCommnicationEnergyForLocation(location, mecs, f);
+					communicationEnergy += MinCommnicationEnergyForLocation(location, mecs, f);
 				}
 				// only adjust when the energy can be reduced (< originalEnergy)
-				if ((connectionEnergy + communicationEngergy < originalEnergy)
-						&& (connectionEnergy + communicationEngergy < minEnergy)) {
-					minEnergy = connectionEnergy + communicationEngergy;
+				if ((connectionEnergy + communicationEnergy < originalEnergy)
+						&& (connectionEnergy + communicationEnergy < minEnergy)) {
+					minEnergy = connectionEnergy + communicationEnergy;
 					maxReducedMEC = candidateMEC;
 				}
 			}
