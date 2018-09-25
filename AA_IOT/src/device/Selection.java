@@ -87,7 +87,14 @@ public class Selection {
 	} // end method selectMaxTotalSatisfy
 
 	/**
-	 * To satisfy other locations after satisfying MaxGroupsLocation
+	 * To satisfy other locations after satisfying MaxGroupsLocation.
+	 * 
+	 * Iterate through Sets.intersection(unsatisfiedLocations,
+	 * locationsSelectedGroupCovers) and remove location from
+	 * unsatisfiedLocations causes Exception java.util.HashMap$KeyIterator.next.
+	 * Therefore, Sets.intersection(unsatisfiedLocations,
+	 * locationsSelectedGroupCovers) is removed and use
+	 * locationsSelectedGroupCovers instead.
 	 */
 	private static void satisfyUnsatisfiedLocations(Group selected, Set<Location> unsatisfiedLocations,
 			Set<Location> satisfiedLocations, Set<Device> selectedDevices) {
@@ -96,7 +103,10 @@ public class Selection {
 		for (Device member : selected.getMembers()) {
 			locationsSelectedGroupCovers.addAll(member.getCoverage());
 		}
-		for (Location location : Sets.intersection(unsatisfiedLocations, locationsSelectedGroupCovers)) {
+		for (Location location : locationsSelectedGroupCovers) {
+			if (location.isSatisfied()) {
+				continue;
+			}
 			for (Group unsatisfiedGroup : location.getGroups()) {
 				if (isSatisfy(selected, unsatisfiedGroup, selectedDevices) == 1) {
 					location.setSatisfied(true);
