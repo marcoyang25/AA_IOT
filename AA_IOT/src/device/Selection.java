@@ -210,14 +210,14 @@ public class Selection {
 		for (Location location : satisfiedLocations) {
 			final Group selectedGroup = location.getSelectedGroup();
 			double currentEnergy = computeDevicesEnergy(selectedGroup.getMembers());
-			for (Group group : location.getGroups()) {
-				if (selectedGroup.equals(group)) {
+			for (Group candidateGroup : location.getGroups()) {
+				if (selectedGroup.equals(candidateGroup)) {
 					continue;
 				}
-				if (selectedDevices.containsAll(group.getMembers())
-						&& computeDevicesEnergy(group.getMembers()) < currentEnergy) {
-					currentEnergy = computeDevicesEnergy(group.getMembers());
-					location.setSelectedGroup(group);
+				if (selectedDevices.containsAll(candidateGroup.getMembers())
+						&& computeDevicesEnergy(candidateGroup.getMembers()) < currentEnergy) {
+					currentEnergy = computeDevicesEnergy(candidateGroup.getMembers());
+					location.setSelectedGroup(candidateGroup);
 				}
 			}
 		}
