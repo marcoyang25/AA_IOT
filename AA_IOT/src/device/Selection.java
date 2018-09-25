@@ -66,11 +66,11 @@ public class Selection {
 		return MaxGroupsLocation;
 	} // end method findMaxGroupsLocation
 
-	private static Group selectMaxTotalSatisfy(Location location, Set<Location> unsatisfiedLocations,
+	private static Group selectMaxTotalSatisfy(Location locationToSatisfy, Set<Location> unsatisfiedLocations,
 			Set<Device> selectedDevices) {
 		Group maxGroup = null;
 		double max = 0;
-		for (Group selecting : location.getGroups()) {
+		for (Group selecting : locationToSatisfy.getGroups()) {
 			// not satisfying any location which is originally unsatisfied
 			if (totalSatisfy(selecting, unsatisfiedLocations, selectedDevices) == 0) {
 				continue;
@@ -128,11 +128,11 @@ public class Selection {
 		return totalSatisfy;
 	} // end method totalSatisfy
 
-	private static Group selectMaxTotalInvolve(Location location, Set<Location> unsatisfiedLocations,
+	private static Group selectMaxTotalInvolve(Location locationToSatisfy, Set<Location> unsatisfiedLocations,
 			Set<Device> selectedDevices) {
 		Group maxGroup = null;
 		double max = 0;
-		for (Group selecting : location.getGroups()) {
+		for (Group selecting : locationToSatisfy.getGroups()) {
 			if (totalInvolve(selecting, unsatisfiedLocations, selectedDevices) == 0) {
 				continue;
 			} else {
@@ -180,10 +180,10 @@ public class Selection {
 		}
 	} // end method involve
 
-	private static Group selectMinEnergy(Location location, Set<Device> selectedDevices) {
+	private static Group selectMinEnergy(Location locationToSatisfy, Set<Device> selectedDevices) {
 		Group minGroup = null;
 		double min = Double.POSITIVE_INFINITY;
-		for (Group selecting : location.getGroups()) {
+		for (Group selecting : locationToSatisfy.getGroups()) {
 			double energy = computeDevicesEnergy(Sets.difference(selecting.getMembers(),
 					Sets.intersection(selecting.getMembers(), selectedDevices)));
 			if (energy <= min) {
