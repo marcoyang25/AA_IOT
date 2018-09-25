@@ -137,25 +137,28 @@ public class Adjustment {
 			// skip the original associated MEC server
 			if (originalAssociatedMEC.equals(candidateMEC)) {
 				continue;
-			} else {
-				// change its associated MEC
-				deviceToAdjust.setAssociatedMEC(candidateMEC);
-				// compute the connection energy
-				double connectionEnergy = deviceToAdjust.getConnectionEnergy().get(candidateMEC);
-				double communicationEnergy = 0;
-				for (Location location : deviceToAdjust.getLocationsResponsibleFor()) {
-					communicationEnergy += MinCommnicationEnergyForLocation(location, mecs, f);
-				}
-				// only adjust when the energy can be reduced (< originalEnergy)
-				if ((connectionEnergy + communicationEnergy < originalEnergy)
-						&& (connectionEnergy + communicationEnergy < minEnergy)) {
-					minEnergy = connectionEnergy + communicationEnergy;
-					maxReducedMEC = candidateMEC;
-				}
+			} 
+			if (!candidateMEC.hasCapacity()) {
+				continue;
+			}
+			// change its associated MEC
+			deviceToAdjust.setAssociatedMEC(candidateMEC);
+			// compute the connection energy
+			double connectionEnergy = deviceToAdjust.getConnectionEnergy().get(candidateMEC);
+			double communicationEnergy = 0;
+			for (Location location : deviceToAdjust.getLocationsResponsibleFor()) {
+				communicationEnergy += MinCommnicationEnergyForLocation(location, mecs, f);
+			}
+			// only adjust when the energy can be reduced (< originalEnergy)
+			if ((connectionEnergy + communicationEnergy < originalEnergy)
+					&& (connectionEnergy + communicationEnergy < minEnergy)) {
+				minEnergy = connectionEnergy + communicationEnergy;
+				maxReducedMEC = candidateMEC;
 			}
 		} // end for
 
 		// if the total energy cannot be reduced
+		// no adjustment is made
 		if (maxReducedMEC == null) {
 			deviceToAdjust.setAssociatedMEC(originalAssociatedMEC);
 			return 0;
@@ -163,6 +166,8 @@ public class Adjustment {
 		// the total energy can be reduced
 		else {
 			deviceToAdjust.setAssociatedMEC(maxReducedMEC);
+			// set its serving devices right now
+			maxReducedMEC.setServing(maxReducedMEC.getServing() + 1);
 			// adjust locations responsible for
 			for (Location location : deviceToAdjust.getLocationsResponsibleFor()) {
 				setMinCommnicationEnergyMEC(location, mecs, f);
