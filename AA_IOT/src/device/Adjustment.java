@@ -122,7 +122,9 @@ public class Adjustment {
 	} // end method findMaxEnergyDevice
 
 	/**
-	 * 
+	 * Adjust the device by connecting the device to a MEC server which reduces
+	 * maximum overall energy cost. The processing MECs and communication energy
+	 * for locations are set under this circumstance.
 	 */
 	private static double adjustDevice(Device deviceToAdjust, List<Vertex> mecs,
 			FloydWarshallShortestPaths<Vertex, DefaultEdge> f) {
