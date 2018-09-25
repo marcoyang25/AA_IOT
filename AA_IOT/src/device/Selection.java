@@ -192,7 +192,7 @@ public class Selection {
 	
 	private static void adjust(Set<Location> satisfiedLocations, Set<Device> selectedDevices) {
 		for (Location location : satisfiedLocations) {
-			Group selectedGroup = location.getSelectedGroup();
+			final Group selectedGroup = location.getSelectedGroup();
 			double currentEnergy = computeDevicesEnergy(selectedGroup.getMembers());
 			for (Group group : location.getGroups()) {
 				if(selectedGroup.equals(group)) {
