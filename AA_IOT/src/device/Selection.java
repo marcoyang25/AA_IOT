@@ -17,21 +17,22 @@ public class Selection {
 		}
 		while (!unsatisfiedLocations.isEmpty()) {
 			// find an unsatisfied location l with maximum number of groups
-			Location location = findMaxGroupsLocation(unsatisfiedLocations);
+			Location locationToSatisfy = findMaxGroupsLocation(unsatisfiedLocations);
 			Group selectedGroup = null;
 			// l is satisfied
-			location.setSatisfied(true);
-			unsatisfiedLocations.remove(location);
-			satisfiedLocations.add(location);
+			locationToSatisfy.setSatisfied(true);
+			unsatisfiedLocations.remove(locationToSatisfy);
+			satisfiedLocations.add(locationToSatisfy);
 
-			if ((selectedGroup = selectMaxTotalSatisfy(location, unsatisfiedLocations, selectedDevices)) != null) {
-				location.setSelectedGroup(selectedGroup);
-				satisfyUnsatisfiedLocations(selectedGroup, unsatisfiedLocations, satisfiedLocations, selectedDevices);
-			} else if ((selectedGroup = selectMaxTotalInvolve(location, unsatisfiedLocations,
+			if ((selectedGroup = selectMaxTotalSatisfy(locationToSatisfy, unsatisfiedLocations,
 					selectedDevices)) != null) {
-				location.setSelectedGroup(selectedGroup);
-			} else if ((selectedGroup = selectMinEnergy(location, selectedDevices)) != null) {
-				location.setSelectedGroup(selectedGroup);
+				locationToSatisfy.setSelectedGroup(selectedGroup);
+				satisfyUnsatisfiedLocations(selectedGroup, unsatisfiedLocations, satisfiedLocations, selectedDevices);
+			} else if ((selectedGroup = selectMaxTotalInvolve(locationToSatisfy, unsatisfiedLocations,
+					selectedDevices)) != null) {
+				locationToSatisfy.setSelectedGroup(selectedGroup);
+			} else if ((selectedGroup = selectMinEnergy(locationToSatisfy, selectedDevices)) != null) {
+				locationToSatisfy.setSelectedGroup(selectedGroup);
 			} else {
 				System.err.println("No Group is selected!!");
 			}
@@ -204,13 +205,13 @@ public class Selection {
 		}
 		return energy;
 	} // end method computeDevicesEnergy
-	
+
 	private static void adjust(Set<Location> satisfiedLocations, Set<Device> selectedDevices) {
 		for (Location location : satisfiedLocations) {
 			final Group selectedGroup = location.getSelectedGroup();
 			double currentEnergy = computeDevicesEnergy(selectedGroup.getMembers());
 			for (Group group : location.getGroups()) {
-				if(selectedGroup.equals(group)) {
+				if (selectedGroup.equals(group)) {
 					continue;
 				}
 				if (selectedDevices.containsAll(group.getMembers())
@@ -221,5 +222,5 @@ public class Selection {
 			}
 		}
 	} // end method adjust
-	
+
 }
