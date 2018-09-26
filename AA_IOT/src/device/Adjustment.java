@@ -23,9 +23,6 @@ public class Adjustment {
 
 	public static void adjust(Set<Device> selectedDevices, Locations locations, List<Vertex> mecs,
 			FloydWarshallShortestPaths<Vertex, DefaultEdge> f) {
-		Queue<Device> Q = new LinkedList<>();
-		Set<Device> unadjustedDevices = new HashSet<>(selectedDevices);
-
 		// for each location and for each device in its selected group members
 		// set, add the location to the device LocationsResponsibleFor
 		for (Location location : locations.values()) {
@@ -41,6 +38,8 @@ public class Adjustment {
 
 		// running n times
 		for (int n = 0; n < 1; n++) {
+			Queue<Device> Q = new LinkedList<>();
+			Set<Device> unadjustedDevices = new HashSet<>(selectedDevices);
 			while (!unadjustedDevices.isEmpty()) {
 				Device maxEnergyDevice = findMaxEnergyDevice(unadjustedDevices, f);
 				Q.offer(maxEnergyDevice);
