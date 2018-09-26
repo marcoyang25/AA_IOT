@@ -21,8 +21,9 @@ public class Adjustment {
 	private Adjustment() {
 	}
 
-	public static void adjust(Set<Device> selectedDevices, Locations locations, List<Vertex> mecs,
+	public static double adjust(Set<Device> selectedDevices, Locations locations, List<Vertex> mecs,
 			FloydWarshallShortestPaths<Vertex, DefaultEdge> f) {
+		double totalRecuced = 0;
 		// for each location and for each device in its selected group members
 		// set, add the location to the device LocationsResponsibleFor
 		for (Location location : locations.values()) {
@@ -30,7 +31,6 @@ public class Adjustment {
 				device.addLocationResponsibleFor(location);
 			}
 		}
-
 		// calculate processing MEC for each location
 		for (Location location : locations.values()) {
 			setMinCommnicationEnergyMEC(location, mecs, f);
@@ -48,15 +48,14 @@ public class Adjustment {
 					unadjustedDevices.remove(deviceToAdjust);
 					// adjust this device
 					double reducedEnergy = adjustDevice(deviceToAdjust, mecs, f);
-					if (reducedEnergy > 0) {
-						// System.out.println("reducedEnergy: " +
-						// reducedEnergy);
-						addAffectedDevicesByRelation(Q, deviceToAdjust, unadjustedDevices);
-					}
+					totalRecuced += reducedEnergy;
+					// System.out.println("reducedEnergy: " +
+					// reducedEnergy);
+					addAffectedDevicesByRelation(Q, deviceToAdjust, unadjustedDevices);
 				} // end while
 			} // end while
 		} // end for
-
+		return totalRecuced;
 	} // end method adjust
 
 	/**
