@@ -40,6 +40,7 @@ public class Device {
 		this.connectionEnergy = new HashMap<>();
 		this.communicationEnergy = -1;
 		this.coverage = new HashSet<>();
+		this.locationsResponsibleFor = new HashSet<>();
 
 		this.precision = 5 * Math.random();
 		this.accuracies = new HashMap<>();
