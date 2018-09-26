@@ -32,6 +32,7 @@ public class Location {
 		this.selectedGroup = null;
 		this.groups = new HashSet<>();
 		this.processingMEC = null;
+		this.communicationEnergy = -1;
 		this.coveredBy = new HashSet<>();
 	}
 
