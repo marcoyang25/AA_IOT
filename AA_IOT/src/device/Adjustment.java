@@ -162,7 +162,8 @@ public class Adjustment {
 		// the total energy can be reduced
 		else {
 			deviceToAdjust.setAssociatedMEC(maxReducedMEC);
-			// set its serving devices right now
+			// setting the serving status of MEC servers
+			originalAssociatedMEC.setServing(originalAssociatedMEC.getServing() - 1);
 			maxReducedMEC.setServing(maxReducedMEC.getServing() + 1);
 			// adjust locations responsible for
 			for (Location location : deviceToAdjust.getLocationsResponsibleFor()) {
