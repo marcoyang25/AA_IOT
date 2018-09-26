@@ -128,12 +128,12 @@ public class Selection {
 			locationsSelectingGroupCovers.addAll(member.getCoverage());
 		}
 		for (Location unsatisfiedLocation : Sets.intersection(unsatisfiedLocations, locationsSelectingGroupCovers)) {
-			int satisfy = 0;
 			for (Group unsatisfied : unsatisfiedLocation.getGroups()) {
-				satisfy += isSatisfy(selecting, unsatisfied, selectedDevices);
+				if (isSatisfy(selecting, unsatisfied, selectedDevices) == 1) {
+					totalSatisfy += 1;
+					break;
+				}
 			}
-			satisfy = Integer.min(1, satisfy);
-			totalSatisfy += satisfy;
 		}
 		return totalSatisfy;
 	} // end method totalSatisfy
