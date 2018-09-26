@@ -128,7 +128,7 @@ public class Adjustment {
 			FloydWarshallShortestPaths<Vertex, DefaultEdge> f) {
 		final Vertex originalAssociatedMEC = deviceToAdjust.getAssociatedMEC();
 		final double originalEnergy = deviceToAdjust.getConnectionEnergy().get(deviceToAdjust.getAssociatedMEC())
-				+ deviceToAdjust.getCommunicationEnergy();
+				+ locationsResponsibleForCommunicationEnergy(deviceToAdjust.getLocationsResponsibleFor());
 		Vertex maxReducedMEC = null;
 		double minEnergy = Double.POSITIVE_INFINITY;
 		for (Vertex candidateMEC : mecs) {
@@ -229,5 +229,13 @@ public class Adjustment {
 			Q.offer(entry.getKey());
 		}
 	} // end method addAffectedDevicesByRelation
+
+	private static double locationsResponsibleForCommunicationEnergy(Set<Location> locationsResponsibleFor) {
+		double energy = 0;
+		for (Location location : locationsResponsibleFor) {
+			energy += location.getCommunicationEnergy();
+		}
+		return energy;
+	} // end method locationsResponsibleForCommunicationEnergy
 
 }
