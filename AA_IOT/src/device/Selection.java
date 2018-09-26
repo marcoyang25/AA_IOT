@@ -71,16 +71,16 @@ public class Selection {
 		Group maxGroup = null;
 		double max = 0;
 		for (Group selecting : locationToSatisfy.getGroups()) {
+			final int totalSatisfy = totalSatisfy(selecting, unsatisfiedLocations, selectedDevices);
+			final double energy = computeDevicesEnergy(Sets.difference(selecting.getMembers(),
+					Sets.intersection(selecting.getMembers(), selectedDevices)));
 			// not satisfying any location which is originally unsatisfied
-			if (totalSatisfy(selecting, unsatisfiedLocations, selectedDevices) == 0) {
+			if (totalSatisfy == 0) {
 				continue;
-			} else {
-				double energy = computeDevicesEnergy(Sets.difference(selecting.getMembers(),
-						Sets.intersection(selecting.getMembers(), selectedDevices)));
-				if ((totalSatisfy(selecting, unsatisfiedLocations, selectedDevices) / energy) >= max) {
-					max = totalSatisfy(selecting, unsatisfiedLocations, selectedDevices) / energy;
-					maxGroup = selecting;
-				}
+			}
+			if ((totalSatisfy / energy) >= max) {
+				max = totalSatisfy / energy;
+				maxGroup = selecting;
 			}
 		}
 		return maxGroup;
@@ -143,15 +143,16 @@ public class Selection {
 		Group maxGroup = null;
 		double max = 0;
 		for (Group selecting : locationToSatisfy.getGroups()) {
-			if (totalInvolve(selecting, unsatisfiedLocations, selectedDevices) == 0) {
+			final int totalInvolve = totalInvolve(selecting, unsatisfiedLocations, selectedDevices);
+			final double energy = computeDevicesEnergy(Sets.difference(selecting.getMembers(),
+					Sets.intersection(selecting.getMembers(), selectedDevices)));
+			// not involving in any group
+			if (totalInvolve == 0) {
 				continue;
-			} else {
-				double energy = computeDevicesEnergy(Sets.difference(selecting.getMembers(),
-						Sets.intersection(selecting.getMembers(), selectedDevices)));
-				if ((totalInvolve(selecting, unsatisfiedLocations, selectedDevices) / energy) >= max) {
-					max = totalInvolve(selecting, unsatisfiedLocations, selectedDevices) / energy;
-					maxGroup = selecting;
-				}
+			}
+			if ((totalInvolve / energy) >= max) {
+				max = totalInvolve / energy;
+				maxGroup = selecting;
 			}
 		}
 		return maxGroup;
