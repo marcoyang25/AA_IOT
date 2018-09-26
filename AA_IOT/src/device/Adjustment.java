@@ -68,9 +68,9 @@ public class Adjustment {
 	private static void setMinCommnicationEnergyMEC(Location location, List<Vertex> mecs,
 			FloydWarshallShortestPaths<Vertex, DefaultEdge> f) {
 		Vertex MinCommnicationEnergyMEC = null;
-		Double minEnergy = Double.POSITIVE_INFINITY;
+		double minEnergy = Double.POSITIVE_INFINITY;
 		for (Vertex mec : mecs) {
-			Double CommnicationEnergy = locationCommnicationEnergy(location, mec, f);
+			double CommnicationEnergy = locationCommnicationEnergy(location, mec, f);
 			if (CommnicationEnergy <= minEnergy) {
 				minEnergy = CommnicationEnergy;
 				MinCommnicationEnergyMEC = mec;
@@ -179,9 +179,9 @@ public class Adjustment {
 	 */
 	private static double MinCommnicationEnergyForLocation(Location location, List<Vertex> mecs,
 			FloydWarshallShortestPaths<Vertex, DefaultEdge> f) {
-		Double minEnergy = Double.POSITIVE_INFINITY;
+		double minEnergy = Double.POSITIVE_INFINITY;
 		for (Vertex mec : mecs) {
-			Double CommnicationEnergy = locationCommnicationEnergy(location, mec, f);
+			double CommnicationEnergy = locationCommnicationEnergy(location, mec, f);
 			if (CommnicationEnergy <= minEnergy) {
 				minEnergy = CommnicationEnergy;
 			}
