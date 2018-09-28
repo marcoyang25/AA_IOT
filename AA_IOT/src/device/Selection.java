@@ -233,5 +233,63 @@ public class Selection {
 			}
 		}
 	} // end method adjust
+	
+	public static Set<Device> greedyMSC(Devices devices, Locations locations) {
+		Set<Location> unsatisfiedLocations = new HashSet<>(locations.values());
+		Set<Device> selectedDevices = new HashSet<>();
+		Set<Device> availableDevices = new HashSet<>(devices.values());
+		while (!unsatisfiedLocations.isEmpty()) {
+			Location minCovered = selectMinCovered(unsatisfiedLocations);
+			Set<Location> newlyCovered = selectGmscMax(minCovered, availableDevices, unsatisfiedLocations,
+					selectedDevices);
+			remove(unsatisfiedLocations, newlyCovered, selectedDevices);
+		}
+		return selectedDevices;
+	} // end method greegyMSC
+
+	private static Location selectMinCovered(Set<Location> unsatisfiedLocations) {
+		Location minTarget = null;
+		int min = Integer.MAX_VALUE;
+		for (Location location : unsatisfiedLocations) {
+			if (location.getCoveredBy().size() <= min) {
+				min = location.getCoveredBy().size();
+				minTarget = location;
+			}
+		}
+		return minTarget;
+	} // end method selectMinCovered
+
+	private static Set<Location> selectGmscMax(Location minCovered, Set<Device> availableDevices,
+			Set<Location> unsatisfiedLocations, Set<Device> selectedDevices) {
+		Device maxDevice = null;
+		int max = -1;
+		Set<Location> newlyCovered = new HashSet<>();
+		for (Device device : Sets.intersection(availableDevices, minCovered.getCoveredBy())) {
+			Set<Location> intersection = Sets.intersection(device.getCoverage(), unsatisfiedLocations);
+			if (intersection.size() >= max) {
+				max = intersection.size();
+				newlyCovered = intersection;
+				maxDevice = device;
+			}
+
+		}
+		selectedDevices.add(maxDevice);
+		availableDevices.remove(maxDevice);
+		return newlyCovered;
+	} // end method selectGmscMax
+
+	private static void remove(Set<Location> unsatisfiedLocations, Set<Location> newlyCovered,
+			Set<Device> selectedDevices) {
+		for (Location location : newlyCovered) {
+			for (Group unsatisfiedGroup : location.getGroups()) {
+				if (selectedDevices.containsAll(unsatisfiedGroup.getMembers())) {
+					location.setSatisfied(true);
+					unsatisfiedLocations.remove(location);
+					location.setSelectedGroup(unsatisfiedGroup);
+					break;
+				}
+			}
+		}
+	} // end method remove
 
 }
