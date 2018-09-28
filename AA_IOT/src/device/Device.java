@@ -91,6 +91,10 @@ public class Device {
 		this.locationsResponsibleFor.add(location);
 	}
 
+	public void clearLocationsResponsibleFor() {
+		this.locationsResponsibleFor.clear();
+	}
+
 	public Set<Location> getLocationsResponsibleFor() {
 		return Collections.unmodifiableSet(locationsResponsibleFor);
 	}
