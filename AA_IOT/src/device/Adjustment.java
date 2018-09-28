@@ -237,4 +237,18 @@ public class Adjustment {
 		return energy;
 	} // end method locationsResponsibleForCommunicationEnergy
 
+	public static void processingMecDetermination(Set<Device> selectedDevices, Locations locations, List<Vertex> mecs,
+			FloydWarshallShortestPaths<Vertex, DefaultEdge> f) {
+		// for each location and for each device in its selected group members
+		// set, add the location to the device LocationsResponsibleFor
+		for (Location location : locations.values()) {
+			for (Device device : location.getSelectedGroup().getMembers()) {
+				device.addLocationResponsibleFor(location);
+			}
+		}
+		// calculate processing MEC for each location
+		for (Location location : locations.values()) {
+			setMinCommnicationEnergyMEC(location, mecs, f);
+		}
+	} // end method processingMecDetermination
 }
