@@ -37,6 +37,7 @@ public class Network implements Runnable {
 	public void run() {
 
 		StatsAccumulator accumulator = new StatsAccumulator();
+		StatsAccumulator GMSCaccumulator = new StatsAccumulator();
 		
 		// running n times
 		for (int n = 0; n < 1; n++) {
@@ -154,27 +155,40 @@ public class Network implements Runnable {
 			}
 			
 			//-----------------------------------Our-----------------------------------	
-			System.out.println("select");
+			System.out.println("devicesSelection selects");
 			Set<Device> selectedDevices = Selection.devicesSelection(devices, locations);
-			System.out.println("selectedDevices: " + selectedDevices.size());
+			System.out.println("devicesSelection selectedDevices: " + selectedDevices.size());
 			// for each unselected device, set its associated MEC to null
 			for(Device unselected : Sets.difference(new HashSet<>(devices.values()), selectedDevices)) {
 				Vertex originalAssociatedMEC = unselected.getAssociatedMEC();
 				originalAssociatedMEC.setServing(originalAssociatedMEC.getServing() - 1);
 				unselected.setAssociatedMEC(null);
 			}
-			System.out.println("adjust");
 			Adjustment.adjust(selectedDevices, locations, vertices.mec, FloydWarshall);
 			accumulator.add(computeTotalCost(selectedDevices, locations));
 			
 			//-----------------------------------Greedy-MSC-----------------------------------
-			
-			
+			for (Device device : devices.values()) {
+				device.clearLocationsResponsibleFor();
+				device.setAssociatedMEC(ConfigurationMEC.get(device));
+			}
+			System.out.println("G-MSC selects");
+			selectedDevices = Selection.greedyMSC(devices, locations);
+			System.out.println("G-MSC selectedDevices: " + selectedDevices.size());
+			// for each unselected device, set its associated MEC to null
+			for(Device unselected : Sets.difference(new HashSet<>(devices.values()), selectedDevices)) {
+				Vertex originalAssociatedMEC = unselected.getAssociatedMEC();
+				originalAssociatedMEC.setServing(originalAssociatedMEC.getServing() - 1);
+				unselected.setAssociatedMEC(null);
+			}
+			Adjustment.processingMecDetermination(selectedDevices, locations, vertices.mec, FloydWarshall);
+			GMSCaccumulator.add(computeTotalCost(selectedDevices, locations));
 			
 		} // end for
 		
 		// print result
 		System.out.println("Our = " + accumulator.mean());
+		System.out.println("G-MSC = " + GMSCaccumulator.mean());
 	
 	} // end method run
 	
