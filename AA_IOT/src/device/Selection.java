@@ -233,7 +233,7 @@ public class Selection {
 			}
 		}
 	} // end method adjust
-	
+
 	public static Set<Device> greedyMSC(Devices devices, Locations locations) {
 		Set<Location> unsatisfiedLocations = new HashSet<>(locations.values());
 		Set<Device> selectedDevices = new HashSet<>();
@@ -271,7 +271,6 @@ public class Selection {
 				newlyCovered = intersection;
 				maxDevice = device;
 			}
-
 		}
 		selectedDevices.add(maxDevice);
 		availableDevices.remove(maxDevice);
@@ -291,5 +290,35 @@ public class Selection {
 			}
 		}
 	} // end method remove
+
+	public static Set<Device> ESR(Devices devices, Locations locations) {
+		Set<Location> unsatisfiedLocations = new HashSet<>(locations.values());
+		Set<Device> selectedDevices = new HashSet<>();
+		Set<Device> availableDevices = new HashSet<>(devices.values());
+		while (!unsatisfiedLocations.isEmpty()) {
+			Set<Location> newlyCovered = selectMinCost(availableDevices, unsatisfiedLocations, selectedDevices);
+			remove(unsatisfiedLocations, newlyCovered, selectedDevices);
+		}
+		return selectedDevices;
+	} // end method ESR
+
+	private static Set<Location> selectMinCost(Set<Device> availableDevices, Set<Location> unsatisfiedLocations,
+			Set<Device> selectedDevices) {
+		Device minDevice = null;
+		double min = Double.POSITIVE_INFINITY;
+		Set<Location> newlyCovered = null;
+		for (Device device : availableDevices) {
+			Set<Location> intersection = Sets.intersection(device.getCoverage(), unsatisfiedLocations);
+			double energy = device.getConnectionEnergy().get(device.getAssociatedMEC());
+			if (energy / intersection.size() <= min) {
+				min = energy / intersection.size();
+				newlyCovered = intersection;
+				minDevice = device;
+			}
+		}
+		selectedDevices.add(minDevice);
+		availableDevices.remove(minDevice);
+		return newlyCovered;
+	} // end method selectMinCost
 
 }
