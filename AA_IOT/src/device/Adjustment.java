@@ -251,4 +251,23 @@ public class Adjustment {
 			setMinCommnicationEnergyMEC(location, mecs, f);
 		}
 	} // end method processingMecDetermination
+
+	private static void connectToMinConnectionEnergyMEC(Set<Device> selectedDevices, List<Vertex> mecs) {
+		for (Device device : selectedDevices) {
+			final Vertex originalAssociatedMEC = device.getAssociatedMEC();
+			Vertex minMEC = null;
+			double minEnergy = Double.POSITIVE_INFINITY;
+			for (Vertex candidateMEC : mecs) {
+				double connectionEnergy = device.getConnectionEnergy().get(candidateMEC);
+				if (connectionEnergy <= minEnergy) {
+					minEnergy = connectionEnergy;
+					minMEC = candidateMEC;
+				}
+			}
+			device.setAssociatedMEC(minMEC);
+			originalAssociatedMEC.setServing(originalAssociatedMEC.getServing() - 1);
+			minMEC.setServing(minMEC.getServing() + 1);
+		}
+	} // end connectToMinConnectionEnergyMEC
+
 }
