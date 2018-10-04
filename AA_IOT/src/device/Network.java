@@ -111,7 +111,8 @@ public class Network implements Runnable {
 			for (int i = 0; i < LOCATIONS_SIZE;) {
 				Location l = new Location();
 				for (Device d : devices.values()) {
-					if (calculateDistance(d.getX(), d.getY(), l.getX(), l.getY()) <= Device.MAX_DIS_BETWEEN) {
+					double distance = calculateDistance(d.getX(), d.getY(), l.getX(), l.getY());
+					if (distance <= Device.MAX_DIS_BETWEEN) {
 						l.addCoveredby(d);
 						// TODO convert distance to accuracy
 						double accuracy = Math.random() * 5;
