@@ -263,7 +263,7 @@ public class Selection {
 			Set<Location> unsatisfiedLocations, Set<Device> selectedDevices) {
 		Device maxDevice = null;
 		int max = -1;
-		Set<Location> newlyCovered = new HashSet<>();
+		Set<Location> newlyCovered = null;
 		for (Device device : Sets.intersection(availableDevices, minCovered.getCoveredBy())) {
 			Set<Location> intersection = Sets.intersection(device.getCoverage(), unsatisfiedLocations);
 			if (intersection.size() >= max) {
