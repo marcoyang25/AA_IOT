@@ -65,7 +65,7 @@ public class Locations extends HashMap<Integer, Location> {
 						// then the group is discarded after the while loop
 						while (!V.isEmpty()) {
 							// find the device with MAX accuracy
-							double max = Double.MIN_VALUE;
+							double max = Double.NEGATIVE_INFINITY;
 							Device maxAccuracy = null;
 							for (Device device : V) {
 								if (device.getAccuracies().get(location) >= max) {
