@@ -246,6 +246,8 @@ public class Adjustment {
 				device.addLocationResponsibleFor(location);
 			}
 		}
+		// connect each device to MEC that minimizes connection energy cost
+		connectToMinConnectionEnergyMEC(selectedDevices, mecs);
 		// calculate processing MEC for each location
 		for (Location location : locations.values()) {
 			setMinCommnicationEnergyMEC(location, mecs, f);
