@@ -72,6 +72,10 @@ public class Location {
 		return Collections.unmodifiableSet(groups);
 	}
 
+	public void clearGroups() {
+		this.groups.clear();
+	}
+
 	public int getGroupsSize() {
 		return this.groups.size();
 	}
