@@ -10,7 +10,7 @@ import graph.Vertex;
 
 public class Device {
 	public static final double MAX_RADIUS = 100;
-	public static final double MAX_DIS_BETWEEN = 12; // maximum distance between
+	public static final double MAX_DIS_BETWEEN = 5; // maximum distance between
 
 	private int id; // unique id
 	private static int count = 0;
@@ -42,7 +42,7 @@ public class Device {
 		this.coverage = new HashSet<>();
 		this.locationsResponsibleFor = new HashSet<>();
 
-		this.precision = 5 * Math.random();
+		this.precision = 0.6 * Math.random() + 0.6;
 		this.accuracies = new HashMap<>();
 		this.intervals = new HashMap<>();
 	}
