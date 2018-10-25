@@ -237,7 +237,7 @@ public class Adjustment {
 		return energy;
 	} // end method locationsResponsibleForCommunicationEnergy
 
-	public static void processingMecDetermination(Set<Device> selectedDevices, Locations locations, List<Vertex> mecs,
+	public static double processingMecDetermination(Set<Device> selectedDevices, Locations locations, List<Vertex> mecs,
 			FloydWarshallShortestPaths<Vertex, DefaultEdge> f) {
 		// for each location and for each device in its selected group members
 		// set, add the location to the device LocationsResponsibleFor
@@ -246,12 +246,22 @@ public class Adjustment {
 				device.addLocationResponsibleFor(location);
 			}
 		}
+		// first calculate processing MEC for each location
+		// and compute total energy consumption before adjustments
+		for (Location location : locations.values()) {
+			setMinCommnicationEnergyMEC(location, mecs, f);
+		}
+		double originalEnergy = computeTotalCost(selectedDevices, locations);
+
+		// making adjustments
 		// connect each device to MEC that minimizes connection energy cost
 		connectToMinConnectionEnergyMEC(selectedDevices, mecs);
 		// calculate processing MEC for each location
 		for (Location location : locations.values()) {
 			setMinCommnicationEnergyMEC(location, mecs, f);
 		}
+		double adjustedEnergy = computeTotalCost(selectedDevices, locations);
+		return originalEnergy - adjustedEnergy;
 	} // end method processingMecDetermination
 
 	private static void connectToMinConnectionEnergyMEC(Set<Device> selectedDevices, List<Vertex> mecs) {
@@ -271,5 +281,17 @@ public class Adjustment {
 			minMEC.setServing(minMEC.getServing() + 1);
 		}
 	} // end connectToMinConnectionEnergyMEC
+
+	private static double computeTotalCost(Set<Device> selectedDevices, Locations locations) {
+		double consumed = 0;
+		for (Device device : selectedDevices) {
+			consumed += device.getConnectionEnergy().get(device.getAssociatedMEC());
+		}
+		for (Location location : locations.values()) {
+			consumed += location.getCommunicationEnergy();
+			consumed += Network2.PROCESSING_ENERGY;
+		}
+		return consumed;
+	} // end method computeTotalCost
 
 }
