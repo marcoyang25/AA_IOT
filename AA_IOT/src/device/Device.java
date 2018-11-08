@@ -11,7 +11,7 @@ import com.google.common.collect.Range;
 import graph.Vertex;
 
 public class Device {
-	public static final double MAX_RADIUS = 100;
+	public static final double MAX_RADIUS = 200;
 	public static final double MAX_DIS_BETWEEN = 5; // maximum distance between
 
 	private int id; // unique id
