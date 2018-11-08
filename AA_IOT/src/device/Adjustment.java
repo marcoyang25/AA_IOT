@@ -255,7 +255,7 @@ public class Adjustment {
 
 		// making adjustments
 		// connect each device to MEC that minimizes connection energy cost
-		//connectToMinConnectionEnergyMEC(selectedDevices);
+		sequentialConnect(selectedDevices);
 		// calculate processing MEC for each location
 		for (Location location : locations.values()) {
 			setMinCommnicationEnergyMEC(location, f);
@@ -282,6 +282,20 @@ public class Adjustment {
 		location.setCommunicationEnergy(minEnergy);
 		location.setProcessingMEC(MinCommnicationEnergyMEC);
 	} // end method setMinCommnicationEnergyMEC
+
+	public static void sequentialConnect(Set<Device> selectedDevices) {
+		for (Device device : selectedDevices) {
+			final Vertex originalAssociatedMEC = device.getAssociatedMEC();
+			for (Vertex candidateMEC : device.getServingMECs()) {
+				if (candidateMEC.hasCapacity()) {
+					device.setAssociatedMEC(candidateMEC);
+					originalAssociatedMEC.setServing(originalAssociatedMEC.getServing() - 1);
+					candidateMEC.setServing(candidateMEC.getServing() + 1);
+					break;
+				}
+			}
+		}
+	} // end method sequentialConnect
 
 	private static void connectToMinConnectionEnergyMEC(Set<Device> selectedDevices) {
 		for (Device device : selectedDevices) {
