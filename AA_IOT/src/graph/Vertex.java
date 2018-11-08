@@ -7,7 +7,7 @@ public class Vertex {
 	public static final double CLOUDSEVER_ENERGY = 0.1;
 	public static final double MEC_ENERGY = 0.1;
 	public static final double MEC_FORWARDING_ENERGY = 0.5;
-	public static final double SWITCH_ENERGY = 0.5;
+	public static final double SWITCH_ENERGY = 0.9;
 	public static final int CS_ID = 1; // cloud server id
 	// aggregating multiple flows into a single one and compressing with a ratio
 	public static final double RATIO = 0.5;
