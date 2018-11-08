@@ -1,5 +1,7 @@
 package graph;
 
+import device.Device;
+
 public class Vertex {
 	public static final double BS_ENERGY = 0.5;
 	public static final double CLOUDSEVER_ENERGY = 0.1;
@@ -9,6 +11,8 @@ public class Vertex {
 	public static final int CS_ID = 1; // cloud server id
 	// aggregating multiple flows into a single one and compressing with a ratio
 	public static final double RATIO = 0.5;
+	private double x; // x coordinate
+	private double y; // y coordinate
 
 	private int id;
 	private Type type;
@@ -27,6 +31,18 @@ public class Vertex {
 		this.type = type;
 		this.capacity = capacity;
 		this.serving = 0;
+		double r = Device.MAX_RADIUS * Math.random();
+		double a = 2 * Math.PI * Math.random();
+		this.x = r * Math.cos(a);
+		this.y = r * Math.sin(a);
+	}
+
+	public double getX() {
+		return x;
+	}
+
+	public double getY() {
+		return y;
 	}
 
 	public int getId() {
@@ -44,7 +60,7 @@ public class Vertex {
 	public double getCapacity() {
 		return capacity;
 	}
-	
+
 	public boolean hasCapacity() {
 		if (serving < capacity) {
 			return true;
