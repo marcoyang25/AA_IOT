@@ -18,6 +18,7 @@ public class Location {
 	private Vertex processingMEC;
 	private double communicationEnergy;
 	private Set<Device> coveredBy;
+	private double emittedPower;
 
 	public Location() {
 		this.id = ++count;
@@ -34,6 +35,7 @@ public class Location {
 		this.processingMEC = null;
 		this.communicationEnergy = -1;
 		this.coveredBy = new HashSet<>();
+		this.emittedPower = -1;
 	}
 
 	public int getId() {
@@ -102,6 +104,14 @@ public class Location {
 
 	public Set<Device> getCoveredBy() {
 		return Collections.unmodifiableSet(coveredBy);
+	}
+
+	public double getEmittedPower() {
+		return emittedPower;
+	}
+
+	public void setEmittedPower(double emittedPower) {
+		this.emittedPower = emittedPower;
 	}
 
 	@Override
