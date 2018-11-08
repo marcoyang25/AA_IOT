@@ -38,6 +38,37 @@ public class Adjustment {
 
 		// running n times
 		for (int n = 0; n < 1; n++) {
+			Set<Device> unadjustedDevices = new HashSet<>(selectedDevices);
+			while (!unadjustedDevices.isEmpty()) {
+				Device maxEnergyDevice = findMaxEnergyDevice(unadjustedDevices, f);
+				unadjustedDevices.remove(maxEnergyDevice);
+				// adjust this device
+				double reducedEnergy = adjustDevice(maxEnergyDevice, mecs, f);
+				totalRecuced += reducedEnergy;
+				// System.out.println("reducedEnergy: " +
+				// reducedEnergy);
+			} // end while
+		} // end for
+		return totalRecuced;
+	} // end method adjust
+	
+	/*public static double adjust(Set<Device> selectedDevices, Locations locations, List<Vertex> mecs,
+			FloydWarshallShortestPaths<Vertex, DefaultEdge> f) {
+		double totalRecuced = 0;
+		// for each location and for each device in its selected group members
+		// set, add the location to the device LocationsResponsibleFor
+		for (Location location : locations.values()) {
+			for (Device device : location.getSelectedGroup().getMembers()) {
+				device.addLocationResponsibleFor(location);
+			}
+		}
+		// calculate processing MEC for each location
+		for (Location location : locations.values()) {
+			setMinCommnicationEnergyMEC(location, mecs, f);
+		}
+
+		// running n times
+		for (int n = 0; n < 1; n++) {
 			Queue<Device> Q = new LinkedList<>();
 			Set<Device> unadjustedDevices = new HashSet<>(selectedDevices);
 			while (!unadjustedDevices.isEmpty()) {
@@ -56,7 +87,7 @@ public class Adjustment {
 			} // end while
 		} // end for
 		return totalRecuced;
-	} // end method adjust
+	}*/ // end method adjust
 
 	/**
 	 * Find the MEC server with minimum energy to process the data of an input
