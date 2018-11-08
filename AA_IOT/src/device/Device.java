@@ -1,9 +1,11 @@
 package device;
 
 import java.util.Set;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import com.google.common.collect.Range;
 import graph.Vertex;
@@ -17,6 +19,7 @@ public class Device {
 	private double x; // x coordinate
 	private double y; // y coordinate
 	private Vertex associatedMEC;
+	private List<Vertex> servingMECs;
 	private Map<Vertex, Double> connectionEnergy;
 	private double communicationEnergy;
 	private Set<Location> coverage; // locations covered by device
@@ -36,6 +39,7 @@ public class Device {
 		this.y = r * Math.sin(a);
 
 		this.associatedMEC = null;
+		this.servingMECs = new ArrayList<>();
 		// initialize cost
 		this.connectionEnergy = new HashMap<>();
 		this.communicationEnergy = -1;
@@ -65,6 +69,14 @@ public class Device {
 
 	public void setAssociatedMEC(Vertex associatedMEC) {
 		this.associatedMEC = associatedMEC;
+	}
+
+	public void addServingMECs (Vertex mec) {
+		this.servingMECs.add(mec);
+	}
+	
+	public List<Vertex> getServingMECs() {
+		return Collections.unmodifiableList(servingMECs);
 	}
 
 	public Map<Vertex, Double> getConnectionEnergy() {
