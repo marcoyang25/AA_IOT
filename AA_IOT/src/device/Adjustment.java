@@ -249,7 +249,7 @@ public class Adjustment {
 		// first calculate processing MEC for each location
 		// and compute total energy consumption before adjustments
 		for (Location location : locations.values()) {
-			setMinCommnicationEnergyMEC(location, mecs, f);
+			setMinCommnicationEnergyMEC(location, f);
 		}
 		double originalEnergy = computeTotalCost(selectedDevices, locations);
 
@@ -258,11 +258,30 @@ public class Adjustment {
 		connectToMinConnectionEnergyMEC(selectedDevices, mecs);
 		// calculate processing MEC for each location
 		for (Location location : locations.values()) {
-			setMinCommnicationEnergyMEC(location, mecs, f);
+			setMinCommnicationEnergyMEC(location, f);
 		}
 		double adjustedEnergy = computeTotalCost(selectedDevices, locations);
 		return originalEnergy - adjustedEnergy;
 	} // end method processingMecDetermination
+
+	private static void setMinCommnicationEnergyMEC(Location location,
+			FloydWarshallShortestPaths<Vertex, DefaultEdge> f) {
+		Vertex MinCommnicationEnergyMEC = null;
+		double minEnergy = Double.POSITIVE_INFINITY;
+		List<Vertex> mecs = new ArrayList<>();
+		for (Device device : location.getSelectedGroup().getMembers()) {
+			mecs.add(device.getAssociatedMEC());
+		}
+		for (Vertex mec : mecs) {
+			double CommnicationEnergy = locationCommnicationEnergy(location, mec, f);
+			if (CommnicationEnergy <= minEnergy) {
+				minEnergy = CommnicationEnergy;
+				MinCommnicationEnergyMEC = mec;
+			}
+		}
+		location.setCommunicationEnergy(minEnergy);
+		location.setProcessingMEC(MinCommnicationEnergyMEC);
+	} // end method setMinCommnicationEnergyMEC
 
 	private static void connectToMinConnectionEnergyMEC(Set<Device> selectedDevices, List<Vertex> mecs) {
 		for (Device device : selectedDevices) {
