@@ -129,7 +129,7 @@ public class Adjustment {
 				+ locationsResponsibleForCommunicationEnergy(deviceToAdjust.getLocationsResponsibleFor());
 		Vertex maxReducedMEC = null;
 		double minEnergy = Double.POSITIVE_INFINITY;
-		for (Vertex candidateMEC : mecs) {
+		for (Vertex candidateMEC : deviceToAdjust.getServingMECs()) {
 			// skip the original associated MEC server
 			if (originalAssociatedMEC.equals(candidateMEC)) {
 				continue;
@@ -237,7 +237,7 @@ public class Adjustment {
 		return energy;
 	} // end method locationsResponsibleForCommunicationEnergy
 
-	public static double processingMecDetermination(Set<Device> selectedDevices, Locations locations, List<Vertex> mecs,
+	public static double processingMecDetermination(Set<Device> selectedDevices, Locations locations,
 			FloydWarshallShortestPaths<Vertex, DefaultEdge> f) {
 		// for each location and for each device in its selected group members
 		// set, add the location to the device LocationsResponsibleFor
@@ -255,7 +255,7 @@ public class Adjustment {
 
 		// making adjustments
 		// connect each device to MEC that minimizes connection energy cost
-		connectToMinConnectionEnergyMEC(selectedDevices, mecs);
+		//connectToMinConnectionEnergyMEC(selectedDevices);
 		// calculate processing MEC for each location
 		for (Location location : locations.values()) {
 			setMinCommnicationEnergyMEC(location, f);
@@ -283,12 +283,12 @@ public class Adjustment {
 		location.setProcessingMEC(MinCommnicationEnergyMEC);
 	} // end method setMinCommnicationEnergyMEC
 
-	private static void connectToMinConnectionEnergyMEC(Set<Device> selectedDevices, List<Vertex> mecs) {
+	private static void connectToMinConnectionEnergyMEC(Set<Device> selectedDevices) {
 		for (Device device : selectedDevices) {
 			final Vertex originalAssociatedMEC = device.getAssociatedMEC();
 			Vertex minMEC = null;
 			double minEnergy = Double.POSITIVE_INFINITY;
-			for (Vertex candidateMEC : mecs) {
+			for (Vertex candidateMEC : device.getServingMECs()) {
 				double connectionEnergy = device.getConnectionEnergy().get(candidateMEC);
 				if (connectionEnergy <= minEnergy) {
 					minEnergy = connectionEnergy;
