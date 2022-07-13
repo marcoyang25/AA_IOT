@@ -51,7 +51,7 @@ public class Network implements Runnable {
 		StatsAccumulator ESRaccumulator = new StatsAccumulator();
 		
 		// running n times
-		for (int n = 0; n < 10; n++) {
+		for (int n = 0; n < 1; n++) {
 			// initialization
 			Devices devices = new Devices();
 			Locations locations = new Locations();
@@ -113,7 +113,8 @@ public class Network implements Runnable {
 			// TODO set device connection energy according to distance
 			for(Device device : devices.values()) {
 				for(Vertex mec : vertices.mec) {
-					device.getConnectionEnergy().put(mec, Math.random() * 0.8 + 0.2);
+					//device.getConnectionEnergy().put(mec, Math.random() * 0.8 + 0.2);
+					device.getConnectionEnergy().put(mec, 0.2);
 				}
 			}
 			
@@ -173,7 +174,7 @@ public class Network implements Runnable {
 			//-----------------------------------Our-----------------------------------	
 			//System.out.println("devicesSelection selects");
 			Set<Device> selectedDevices = Selection.devicesSelection(devices, locations);
-			//System.out.println("devicesSelection selectedDevices: " + selectedDevices.size());
+			System.out.println("devicesSelection selectedDevices: " + selectedDevices.size());
 			// for each unselected device, set its associated MEC to null
 			for(Device unselected : Sets.difference(new HashSet<>(devices.values()), selectedDevices)) {
 				Vertex originalAssociatedMEC = unselected.getAssociatedMEC();
@@ -203,7 +204,7 @@ public class Network implements Runnable {
 				originalAssociatedMEC.setServing(originalAssociatedMEC.getServing() - 1);
 				unselected.setAssociatedMEC(null);
 			}
-			Adjustment.processingMecDetermination(selectedDevices, locations, vertices.mec, FloydWarshall);
+			Adjustment.processingMecDetermination(selectedDevices, locations, FloydWarshall);
 			GMSCaccumulator.add(computeTotalCost(selectedDevices, locations));
 			
 			//-----------------------------------ESR-----------------------------------
@@ -220,7 +221,7 @@ public class Network implements Runnable {
 				originalAssociatedMEC.setServing(originalAssociatedMEC.getServing() - 1);
 				unselected.setAssociatedMEC(null);
 			}
-			Adjustment.processingMecDetermination(selectedDevices, locations, vertices.mec, FloydWarshall);
+			Adjustment.processingMecDetermination(selectedDevices, locations, FloydWarshall);
 			ESRaccumulator.add(computeTotalCost(selectedDevices, locations));
 			
 			

@@ -14,7 +14,6 @@ import org.jgrapht.ext.GraphImporter;
 import org.jgrapht.ext.ImportException;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.SimpleGraph;
-import org.omg.CORBA.ServiceInformation;
 
 import com.google.common.collect.Range;
 import com.google.common.collect.Sets;
@@ -31,7 +30,7 @@ public class Network2 implements Runnable {
 	private int DEVICES_SIZE = 1200;
 	private int LOCATIONS_SIZE = 1000;
 	private int MEC_NUM = 20;
-	private int MEC_CAPACITY = 70;
+	private int MEC_CAPACITY = 160;
 	private double BASE_ALPHA;
 	private double BASE_GAMMA;
 	private double ALPHA;
@@ -65,7 +64,7 @@ public class Network2 implements Runnable {
 		StatsAccumulator ESRreducedAccumulator = new StatsAccumulator();
 		
 		// running n times
-		for (int n = 0; n < 200; n++) {
+		for (int n = 0; n < 1; n++) {
 			// initialization
 			Devices devices = new Devices();
 			Locations locations = new Locations();
@@ -220,26 +219,43 @@ public class Network2 implements Runnable {
 			// -----------------------------Creating New Input--------------------------------
 
 			//------------------------------Creating New Devices------------------------------
-			/*for (int i = 0; i < 400; i++) {
+			/*for (int i = 0; i < 400; ) {
 				Device d = new Device();
-				devices.put(d.getId(), d);
-				do {
-					Vertex mec = vertices.mec.get(new Random().nextInt(vertices.mec.size()));
-					if(mec.hasCapacity()) {
-						d.setAssociatedMEC(mec);
-						mec.setServing(mec.getServing() + 1);
-						ConfigurationMEC.put(d, mec);
+				// MEC servers in the serving range
+				for (Vertex mec : vertices.mec) {
+					double distance = calculateDistance(d.getX(), d.getY(), mec.getX(), mec.getY());
+					if (distance <= SERVING_RANGE) {
+						d.addServingMECs(mec);
+						d.getConnectionEnergy().put(mec, 0.00005 * Math.pow(distance, 2));
 					}
-				} while (d.getAssociatedMEC() == null);
-				for(Vertex mec : vertices.mec) {
-					d.getConnectionEnergy().put(mec, 0.2 * Math.pow(calculateDistance(d.getX(), d.getY(), mec.getX(), mec.getY()), 2));
 				}
+				if (d.getServingMECs().size() == 0) {
+					continue;
+				}
+
+				List<Vertex> servingMECs = d.getServingMECs();
+				if (hasAvailableMEC(servingMECs) == false) {
+					continue;
+				} else {
+					do {
+						Vertex mec = servingMECs.get(new Random().nextInt(servingMECs.size()));
+						if (mec.hasCapacity()) {
+							d.setAssociatedMEC(mec);
+							mec.setServing(mec.getServing() + 1);
+							ConfigurationMEC.put(d, mec);
+						}
+					} while (d.getAssociatedMEC() == null);
+				}
+
+				// add this device to the list
+				devices.put(d.getId(), d);
+				i++;
+				
 				for (Location l : locations.values()) {
 					double distance = calculateDistance(d.getX(), d.getY(), l.getX(), l.getY());
-					if (distance > 2 && distance <= Device.MAX_DIS_BETWEEN) {
+					if (distance <= Device.MAX_DIS_BETWEEN) {
 						l.addCoveredby(d);
 						d.addCoverage(l);
-						// TODO convert distance to accuracy
 						final double emittedPower = l.getEmittedPower();
 						double measuredPower = computeMeasuredPower(emittedPower, distance);
 						double accuracy = Math.abs(emittedPower - measuredPower);
@@ -268,17 +284,18 @@ public class Network2 implements Runnable {
 			// for each unselected device, set its associated MEC to null
 			
 			// compute the number of selected devices
-			EDMSreducedAccumulator.add(selectedDevices.size());
+			//EDMSreducedAccumulator.add(selectedDevices.size());
 			
 			for(Device unselected : Sets.difference(new HashSet<>(devices.values()), selectedDevices)) {
 				Vertex originalAssociatedMEC = unselected.getAssociatedMEC();
 				originalAssociatedMEC.setServing(originalAssociatedMEC.getServing() - 1);
 				unselected.setAssociatedMEC(null);
 			}
-			//EDMSreducedAccumulator.add(Adjustment.adjust(selectedDevices, locations, vertices.mec, FloydWarshall));
+			EDMSreducedAccumulator.add(Adjustment.adjust(selectedDevices, locations, vertices.mec, FloydWarshall));
 			//System.out.println(Adjustment.adjust(selectedDevices, locations, vertices.mec, FloydWarshall));
-			Adjustment.adjust(selectedDevices, locations, vertices.mec, FloydWarshall);
-			accumulator.add(computeTotalCost(selectedDevices, locations));
+			//Adjustment.adjust(selectedDevices, locations, vertices.mec, FloydWarshall);
+			//accumulator.add(computeTotalCost(selectedDevices, locations));
+			accumulator.add(computeCommunicationCost(locations));
 			
 			/*for (Vertex mec : vertices.mec) {
 				System.out.printf("%.5f\n", (double) mec.getServing() / (double) MEC_CAPACITY);
@@ -308,7 +325,7 @@ public class Network2 implements Runnable {
 			selectedDevices = Selection.greedyMSC(devices, locations);
 			
 			// compute the number of selected devices
-			GMSCreducedAccumulator.add(selectedDevices.size());
+			//GMSCreducedAccumulator.add(selectedDevices.size());
 			
 			//System.out.println("G-MSC selectedDevices: " + selectedDevices.size());
 			// for each unselected device, set its associated MEC to null
@@ -317,10 +334,11 @@ public class Network2 implements Runnable {
 				originalAssociatedMEC.setServing(originalAssociatedMEC.getServing() - 1);
 				unselected.setAssociatedMEC(null);
 			}
-			//GMSCreducedAccumulator.add(Adjustment.processingMecDetermination(selectedDevices, locations, FloydWarshall));
+			GMSCreducedAccumulator.add(Adjustment.processingMecDetermination(selectedDevices, locations, FloydWarshall));
 			//System.out.println(Adjustment.processingMecDetermination(selectedDevices, locations, FloydWarshall));
-			Adjustment.processingMecDetermination(selectedDevices, locations, FloydWarshall);
-			GMSCaccumulator.add(computeTotalCost(selectedDevices, locations));
+			//Adjustment.processingMecDetermination(selectedDevices, locations, FloydWarshall);
+			//GMSCaccumulator.add(computeTotalCost(selectedDevices, locations));
+			GMSCaccumulator.add(computeCommunicationCost(locations));
 			
 			/*for (Vertex mec : vertices.mec) {
 				System.out.printf("%.5f\n", (double) mec.getServing() / (double) MEC_CAPACITY);
@@ -343,7 +361,7 @@ public class Network2 implements Runnable {
 			selectedDevices = Selection.ESR(devices, locations);
 			
 			// compute the number of selected devices
-			ESRreducedAccumulator.add(selectedDevices.size());
+			//ESRreducedAccumulator.add(selectedDevices.size());
 			
 			//System.out.println("ESR selectedDevices: " + selectedDevices.size());
 			// for each unselected device, set its associated MEC to null
@@ -352,10 +370,11 @@ public class Network2 implements Runnable {
 				originalAssociatedMEC.setServing(originalAssociatedMEC.getServing() - 1);
 				unselected.setAssociatedMEC(null);
 			}
-			//ESRreducedAccumulator.add(Adjustment.processingMecDetermination(selectedDevices, locations, vertices.mec, FloydWarshall));
+			ESRreducedAccumulator.add(Adjustment.processingMecDetermination(selectedDevices, locations, FloydWarshall));
 			//System.out.println(Adjustment.processingMecDetermination(selectedDevices, locations, vertices.mec, FloydWarshall));
-			Adjustment.processingMecDetermination(selectedDevices, locations, FloydWarshall);
-			ESRaccumulator.add(computeTotalCost(selectedDevices, locations));
+			//Adjustment.processingMecDetermination(selectedDevices, locations, FloydWarshall);
+			//ESRaccumulator.add(computeTotalCost(selectedDevices, locations));
+			ESRaccumulator.add(computeCommunicationCost(locations));
 			
 			
 		} // end for
