@@ -1,13 +1,13 @@
-package device;
+package com.mnetlab.aaiot;
+
+import com.mnetlab.aaiot.network.Network2;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class Executor {
-	public static final String INS_GML = "./AA_IOT/gml/IowaStatewideFiberMap.gml";
-	public static final String PALMETTO_GML = "./AA_IOT/gml/Palmetto.gml";
-	/*public static final String INS_GML = "/home/mnetlab/eclipse-workspace/AA_IOT/AA_IOT/gml/IowaStatewideFiberMap.gml";
-	public static final String PALMETTO_GML = "/home/mnetlab/eclipse-workspace/AA_IOT/AA_IOT/gml/Palmetto.gml";*/
+	public static final String INS_GML = "./src/main/resources/gml/IowaStatewideFiberMap.gml";
+	public static final String PALMETTO_GML = "./src/main/resources/gml/Palmetto.gml";
 	
 	public static void main(String[] args) {
 		
