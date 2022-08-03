@@ -24,6 +24,7 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Random;
 import java.util.Set;
 
@@ -43,7 +44,7 @@ public class Network3 implements Runnable {
 	public Network3(String name, String pathname, int DEVICES_SIZE, int LOCATIONS_SIZE, int MEC_NUM, double BASE_ALPHA,
 			double BASE_GAMMA, double ALPHA, double GAMMA) {
 		this.name = name;
-		this.file = new File(pathname);
+		this.file = new File(Objects.requireNonNull(getClass().getClassLoader().getResource(pathname)).getFile());
 		this.DEVICES_SIZE = DEVICES_SIZE;
 		this.LOCATIONS_SIZE = LOCATIONS_SIZE;
 		this.MEC_NUM = MEC_NUM;
